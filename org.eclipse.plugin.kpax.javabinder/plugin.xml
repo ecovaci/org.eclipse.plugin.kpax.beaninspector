@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.eclipse.plugin.kpax.javabinder.commands.category"
+            name="Kpax Java Binder Plugin Category">
+      </category>
+      <command
+            categoryId="org.eclipse.plugin.kpax.javabinder.commands.category"
+            id="org.eclipse.plugin.kpax.javabinder.commands.javabinderCommand_selectClass"
+            name="Kpax Java Binder Plugin Select Class Command">
+      </command>
+      <command
+            categoryId="org.eclipse.plugin.kpax.javabinder.commands.category"
+            id="org.eclipse.plugin.kpax.javabinder.commands.javabinderCommand_selectPath"
+            name="Kpax Java Binder Plugin Select Path Command">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.plugin.kpax.javabinder.handlers.BinderHandler"
+            commandId="org.eclipse.plugin.kpax.javabinder.commands.javabinderCommand_selectClass">
+      </handler>
+      <handler
+            class="org.eclipse.plugin.kpax.javabinder.handlers.BinderHandler"
+            commandId="org.eclipse.plugin.kpax.javabinder.commands.javabinderCommand_selectPath">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.plugin.kpax.javabinder.commands.javabinderCommand_selectClass"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+ALT+=">
+      </key>
+      <key
+            commandId="org.eclipse.plugin.kpax.javabinder.commands.javabinderCommand_selectPath"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+ALT+SPACE">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="org.eclipse.plugin.kpax.javabinder.toolbars.javabinderToolbar">
+            <command
+                  commandId="org.eclipse.plugin.kpax.javabinder.commands.javabinderCommand_selectClass"
+                  icon="icons/sample.gif"
+                  id="org.eclipse.plugin.kpax.javabinder.toolbars.javabinderCommand"
+                  tooltip="Say hello world">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+
+</plugin>
