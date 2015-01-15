@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Javabinder
-Bundle-SymbolicName: org.eclipse.plugin.kpax.javabinder;singleton:=true
+Bundle-Name: JavaBean Inspector
+Bundle-SymbolicName: org.eclipse.plugin.kpax.beaninspector;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.plugin.kpax.javabinder.JavaBinderPlugin
+Bundle-Activator: org.eclipse.plugin.kpax.beaninspector.JavaBeanInspectorPlugin
 Bundle-Vendor: Open source
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.workbench,

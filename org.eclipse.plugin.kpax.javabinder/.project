@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.plugin.kpax.javabinder</name>
+	<name>org.eclipse.plugin.kpax.beaninspector</name>
 	<comment></comment>
 	<projects>
 	</projects>
