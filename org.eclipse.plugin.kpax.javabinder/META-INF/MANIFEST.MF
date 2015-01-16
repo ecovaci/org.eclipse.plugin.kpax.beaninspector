@@ -1,17 +1,18 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: JavaBean Inspector
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.plugin.kpax.beaninspector;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.plugin.kpax.beaninspector.JavaBeanInspectorPlugin
-Bundle-Vendor: Open source
+Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.workbench,
  org.eclipse.core.resources,
  org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.core.expressions,
+Import-Package: org.apache.commons.lang,
+ org.eclipse.core.expressions,
  org.eclipse.e4.core.di,
  org.eclipse.e4.ui.model.application.ui,
  org.eclipse.e4.ui.workbench,

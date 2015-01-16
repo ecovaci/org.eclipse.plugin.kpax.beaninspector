@@ -1,11 +1,11 @@
 package org.eclipse.plugin.kpax.beaninspector.util;
 
 import org.eclipse.jdt.core.IType;
-import org.eclipse.plugin.kpax.beaninspector.bean.BeanProperty;
+import org.eclipse.plugin.kpax.beaninspector.introspector.model.BeanProperty;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 
-public class WidgetUtils {
+public class WidgetDataUtils {
 
 	private static final String PROPERTY_DATA = "property";
 

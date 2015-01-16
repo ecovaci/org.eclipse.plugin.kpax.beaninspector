@@ -5,11 +5,12 @@ import java.util.Collection;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.plugin.kpax.beaninspector.bean.BeanIntrospector;
-import org.eclipse.plugin.kpax.beaninspector.bean.BeanProperty;
-import org.eclipse.plugin.kpax.beaninspector.util.Editor;
+import org.eclipse.plugin.kpax.beaninspector.Messages;
+import org.eclipse.plugin.kpax.beaninspector.introspector.BeanIntrospector;
+import org.eclipse.plugin.kpax.beaninspector.introspector.model.BeanProperty;
 import org.eclipse.plugin.kpax.beaninspector.util.Glyphs;
-import org.eclipse.plugin.kpax.beaninspector.util.WidgetUtils;
+import org.eclipse.plugin.kpax.beaninspector.util.TextEditorUtils;
+import org.eclipse.plugin.kpax.beaninspector.util.WidgetDataUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -38,18 +39,19 @@ public class ContextualBeanInspector {
 				}
 				rootMenu.setLocation(location.x, location.y);
 				rootMenu.setVisible(true);
+			} else {
+				MessageDialog.openWarning(this.shell, Messages.ContextualBeanInspector_messageTitle,
+						Messages.ContextualBeanInspector_info_no_property);
 			}
 		} else {
-			MessageDialog
-					.openInformation(
-							this.shell,
-							"JavaBean Inspector Message",
-							"First, you have to select a Java type. Use the toolbar button for opening the JavaBean Inspector popup dialog (or press Ctrl+Alt+0)");
+			MessageDialog.openInformation(this.shell,
+					Messages.ContextualBeanInspector_messageTitle,
+					Messages.ContextualBeanInspector_messageTitle);
 		}
 	}
 
 	private Menu buildMenuTree(MenuItem item) throws JavaModelException {
-		IType beanType = WidgetUtils.getType(item, BindingDialog.getBeanType());
+		IType beanType = WidgetDataUtils.getType(item, BindingDialog.getBeanType());
 		if (beanType != null) {
 			BeanIntrospector beanIntrospector = new BeanIntrospector(beanType);
 			Collection<BeanProperty> properties = beanIntrospector.getProperties();
@@ -58,7 +60,7 @@ public class ContextualBeanInspector {
 				if (item != null) {
 					menu = new Menu(shell, SWT.DROP_DOWN);
 					item.setMenu(menu);
-					WidgetUtils.addGlyphOnLeft(item, Glyphs.ARROW_RIGHT);
+					WidgetDataUtils.addGlyphOnLeft(item, Glyphs.ARROW_RIGHT);
 					createClassMenuItem(item);
 				} else {
 					menu = new Menu(shell);
@@ -77,16 +79,16 @@ public class ContextualBeanInspector {
 	}
 
 	private void fillMenuItem(MenuItem item, MenuItem parentItem, BeanProperty property) {
-		WidgetUtils.setProperty(item, property);
-		WidgetUtils.setPath(item, parentItem, property);
+		WidgetDataUtils.setProperty(item, property);
+		WidgetDataUtils.setPath(item, parentItem, property);
 		item.setText(property.asText());
 		item.addSelectionListener(new ItemSelectionListener());
 	}
 
 	private MenuItem createClassMenuItem(MenuItem item) {
 		MenuItem classMenuItem = new MenuItem(item.getMenu(), SWT.PUSH);
-		WidgetUtils.setPath(classMenuItem, WidgetUtils.getPath(item));
-		classMenuItem.setText(Glyphs.glyphOnRight(WidgetUtils.getBeanProperty(item)
+		WidgetDataUtils.setPath(classMenuItem, WidgetDataUtils.getPath(item));
+		classMenuItem.setText(Glyphs.glyphOnRight(WidgetDataUtils.getBeanProperty(item)
 				.getTypeQualifiedName(), Glyphs.ARROW_DOWN));
 		classMenuItem.addSelectionListener(new ItemSelectionListener());
 		new MenuItem(item.getMenu(), SWT.SEPARATOR);
@@ -105,11 +107,11 @@ public class ContextualBeanInspector {
 		@Override
 		public void handleEvent(Event event) {
 			MenuItem menuItem = (MenuItem) event.widget;
-			if (menuItem.getMenu() != null && !WidgetUtils.isVisited(menuItem)) {
+			if (menuItem.getMenu() != null && !WidgetDataUtils.isVisited(menuItem)) {
 				for (MenuItem childItem : menuItem.getMenu().getItems()) {
 					try {
 						buildMenuTree(childItem);
-						WidgetUtils.setVisited(menuItem, true);
+						WidgetDataUtils.setVisited(menuItem, true);
 					} catch (JavaModelException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -123,7 +125,7 @@ public class ContextualBeanInspector {
 		@Override
 		public void widgetSelected(SelectionEvent event) {
 			try {
-				Editor.replaceSelection(WidgetUtils.getPath(event.widget));
+				TextEditorUtils.replaceSelection(WidgetDataUtils.getPath(event.widget));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

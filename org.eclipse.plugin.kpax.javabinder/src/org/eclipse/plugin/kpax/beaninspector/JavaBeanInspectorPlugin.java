@@ -2,25 +2,22 @@ package org.eclipse.plugin.kpax.beaninspector;
 
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.plugin.kpax.beaninspector.logger.Logger;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.prefs.BackingStoreException;
 
 public class JavaBeanInspectorPlugin extends Plugin implements Logger {
 
-	private static final String PLUGIN_ID = "org.eclipse.plugin.kpax.beaninspector";
+	public static final String PLUGIN_ID = "org.eclipse.plugin.kpax.beaninspector";
 	
 	private static BundleContext context;
 
-	private static JavaBeanInspectorPlugin instance;
+	private static Logger instance;
 
 	public JavaBeanInspectorPlugin() {
 		instance = this;
 	}
 
-	public static JavaBeanInspectorPlugin getInstance() {
+	public static Logger getInstance() {
 		return instance;
 	}
 
@@ -83,6 +80,7 @@ public class JavaBeanInspectorPlugin extends Plugin implements Logger {
 		log(e.getMessage(), Status.WARNING, e);
 	}
 
+	@Override
 	public void error(String message, Exception e) {
 		log(message, Status.WARNING, e);
 	}
@@ -91,23 +89,5 @@ public class JavaBeanInspectorPlugin extends Plugin implements Logger {
 		getLog().log(new Status(severity, PLUGIN_ID, Status.OK, message, e));
 	}
 
-	private void savePluginSettings() {
-		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
 
-		preferences.put("KEY1", "VAL1");
-		preferences.put("KEY2", "VAL2");
-
-		try {
-			preferences.flush();
-		} catch (BackingStoreException e) {
-			error("Error on saving preferences", e);
-		}
-	}
-
-	private void loadPluginSettings() {
-		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
-		// you might want to call prefs.sync() if you're worried about others changing your settings
-		//this.someStr = prefs.get(KEY1);
-		//this.someBool= prefs.getBoolean(KEY2);
-	}
 }

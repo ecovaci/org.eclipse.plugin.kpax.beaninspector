@@ -1,4 +1,4 @@
-package org.eclipse.plugin.kpax.beaninspector.bean;
+package org.eclipse.plugin.kpax.beaninspector.introspector.model;
 
 import org.eclipse.jdt.core.IType;
 

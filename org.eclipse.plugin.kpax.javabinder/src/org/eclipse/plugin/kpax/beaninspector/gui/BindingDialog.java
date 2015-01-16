@@ -11,10 +11,11 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.plugin.kpax.beaninspector.JavaBeanInspectorPlugin;
-import org.eclipse.plugin.kpax.beaninspector.bean.BeanIntrospector;
-import org.eclipse.plugin.kpax.beaninspector.bean.BeanProperty;
+import org.eclipse.plugin.kpax.beaninspector.introspector.BeanIntrospector;
+import org.eclipse.plugin.kpax.beaninspector.introspector.model.BeanProperty;
 import org.eclipse.plugin.kpax.beaninspector.logger.Logger;
-import org.eclipse.plugin.kpax.beaninspector.util.WidgetUtils;
+import org.eclipse.plugin.kpax.beaninspector.prefs.Settings;
+import org.eclipse.plugin.kpax.beaninspector.util.WidgetDataUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -54,8 +55,10 @@ public class BindingDialog extends Dialog {
 	private Text classText;
 
 	private TreeItem lastCheckedItem;
-	private Text excludeText;
+
 	private Text includeText;
+
+	private Button showFullQualifiedCheckButton;
 
 	private Button applyButton;
 
@@ -129,7 +132,7 @@ public class BindingDialog extends Dialog {
 		settingsExpandBar.setLayoutData(settingsGridDataExpandBar);
 
 		ExpandItem settingsExpanditem = new ExpandItem(settingsExpandBar, SWT.NONE);
-		settingsExpanditem.setText("Settings");
+		settingsExpanditem.setText("Rules");
 
 		Composite settingsComposite = new Composite(settingsExpandBar, SWT.BORDER);
 		settingsExpanditem.setControl(settingsComposite);
@@ -142,22 +145,14 @@ public class BindingDialog extends Dialog {
 		includeText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		includeText.addModifyListener(new IncludeRegexModifyListener());
 
-		Label excludeLabel = new Label(settingsComposite, SWT.NONE);
-		GridData excludeGridLabel = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
-		excludeGridLabel.widthHint = 163;
-		excludeLabel.setLayoutData(excludeGridLabel);
-		excludeLabel.setText("Exclude regex:");
-
-		excludeText = new Text(settingsComposite, SWT.BORDER);
-		excludeText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		excludeText.addModifyListener(new ExcludeRegexModifyListener());
-
 		Label lblShowFullPath = new Label(settingsComposite, SWT.NONE);
 		lblShowFullPath.setText("Show fully qualified:");
 
-		Button showFullQualifiedCheckButton = new Button(settingsComposite, SWT.CHECK);
+		showFullQualifiedCheckButton = new Button(settingsComposite, SWT.CHECK);
 		showFullQualifiedCheckButton.setSelection(true);
-		showFullQualifiedCheckButton.addListener(SWT.CHANGED, new FullyQualifiedChangeListener());
+		showFullQualifiedCheckButton.addSelectionListener(new FullyQualifiedChangeListener());
+
+		applySettings();
 
 		settingsExpanditem.setHeight(settingsExpanditem.getControl().computeSize(SWT.DEFAULT,
 				SWT.DEFAULT).y);
@@ -195,7 +190,7 @@ public class BindingDialog extends Dialog {
 		if (item == null) {
 			resetTree();
 		}
-		IType itemType = WidgetUtils.getType(item, beanType);
+		IType itemType = WidgetDataUtils.getType(item, beanType);
 		if (itemType != null) {
 			Collection<BeanProperty> properties = new BeanIntrospector(itemType).getProperties();
 			System.out.println("propertyMap " + properties);
@@ -210,8 +205,8 @@ public class BindingDialog extends Dialog {
 	}
 
 	private void fillTreeItem(TreeItem item, TreeItem parent, BeanProperty beanProperty) {
-		WidgetUtils.setProperty(item, beanProperty);
-		WidgetUtils.setPath(item, parent, beanProperty);
+		WidgetDataUtils.setProperty(item, beanProperty);
+		WidgetDataUtils.setPath(item, parent, beanProperty);
 		item.setText(beanProperty.asText());
 	}
 
@@ -219,12 +214,13 @@ public class BindingDialog extends Dialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		applyButton = createButton(parent, IDialogConstants.CLIENT_ID, "Apply", false);
+		applyButton.addSelectionListener(new ApplySelectionListener());
 		applyButton.setEnabled(false);
 	}
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(552, 645);
+		return new Point(552, 612);
 	}
 
 	public TreeItem getLastCheckedItem() {
@@ -244,26 +240,26 @@ public class BindingDialog extends Dialog {
 		shell.setText("JavaBean Inspector");
 	}
 
+	private void applySettings() {
+		Settings settings = Settings.getSettings();
+		includeText.setText(settings.getIncludeRegex());
+		showFullQualifiedCheckButton.setSelection(settings.isShowFullyQualified());
+	}
+
+	private void saveSettings() {
+		Settings settings = Settings.getSettings();
+		settings.setIncludeRegex(includeText.getText());
+		settings.setShowFullyQualified(showFullQualifiedCheckButton.getSelection());
+		settings.saveSettings();
+	}
+
 	private class IncludeRegexModifyListener implements ModifyListener {
 
 		@Override
 		public void modifyText(ModifyEvent e) {
-			String text = ((Text) e.widget).getText();
-			if ("".equals(text)) {
-				excludeText.setEnabled(true);
-			} else {
-				excludeText.setText("");
-				excludeText.setEnabled(false);
+			if (applyButton != null) {
+				applyButton.setEnabled(true);
 			}
-			applyButton.setEnabled(true);
-		}
-	}
-
-	private class ExcludeRegexModifyListener implements ModifyListener {
-
-		@Override
-		public void modifyText(ModifyEvent e) {
-			applyButton.setEnabled(true);
 		}
 	}
 
@@ -279,7 +275,7 @@ public class BindingDialog extends Dialog {
 						lastCheckedItem.setChecked(false);
 					}
 					lastCheckedItem = checkedItem;
-					pathText.setText(WidgetUtils.getTextPath(lastCheckedItem));
+					pathText.setText(WidgetDataUtils.getTextPath(lastCheckedItem));
 				} else {
 					resetLastCheckedItem();
 				}
@@ -329,11 +325,25 @@ public class BindingDialog extends Dialog {
 		}
 	}
 
-	private class FullyQualifiedChangeListener implements Listener {
+	private class FullyQualifiedChangeListener extends SelectionAdapter {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			applyButton.setEnabled(true);
+		}
+	}
+
+	private class ApplySelectionListener extends SelectionAdapter {
 
 		@Override
-		public void handleEvent(Event event) {
-			applyButton.setVisible(true);
+		public void widgetSelected(SelectionEvent e) {
+			saveSettings();
+			applyButton.setEnabled(false);
+			try {
+				buildItemTreeChildren();
+			} catch (JavaModelException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 
 	}

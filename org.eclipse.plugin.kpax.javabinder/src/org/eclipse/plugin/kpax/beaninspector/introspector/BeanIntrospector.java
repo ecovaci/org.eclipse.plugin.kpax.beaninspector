@@ -1,15 +1,19 @@
-package org.eclipse.plugin.kpax.beaninspector.bean;
+package org.eclipse.plugin.kpax.beaninspector.introspector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.plugin.kpax.beaninspector.introspector.model.BeanProperty;
+import org.eclipse.plugin.kpax.beaninspector.prefs.Settings;
 
 public class BeanIntrospector {
 	private final Map<String, BeanProperty> properties = new HashMap<String, BeanProperty>();
@@ -20,8 +24,8 @@ public class BeanIntrospector {
 
 	public BeanIntrospector(IType type) throws JavaModelException {
 		this.type = type;
-		typedProperties = new ArrayList<BeanProperty>();
-		if (type.isClass() || type.isInterface()) {
+		this.typedProperties = new ArrayList<BeanProperty>();
+		if (this.type.exists() && (this.type.isClass() || this.type.isInterface())) {
 			introspect();
 		}
 	}
@@ -30,23 +34,29 @@ public class BeanIntrospector {
 		return properties.values();
 	}
 
+	public BeanProperty getProperty(String name) {
+		return properties.get(name);
+	}
+
+	public boolean hasProperty(String name) {
+		return properties.containsKey(name);
+	}
+
 	public Collection<BeanProperty> getTypedProperties() {
 		return typedProperties;
 	}
-	
+
 	public boolean hasTypedProperties() {
 		return !typedProperties.isEmpty();
 	}
 
 	private void introspect() throws JavaModelException {
 		IType currentType = this.type;
-		while (currentType != null
-				&& !currentType.getFullyQualifiedName().matches("^java(x)?\\.(.)*$")) {
-			System.out.println("Introspect [" + currentType.getFullyQualifiedName() + "]");
+		while (isAccepted(currentType)) {
 			for (IMethod method : currentType.getMethods()) {
 				if (method.getNumberOfParameters() == 0 && hasCorrectModifiers(method)) {
 					String typeName = method.getReturnType();
-					if ("V".equalsIgnoreCase(typeName)) {//return void
+					if ("V".equalsIgnoreCase(typeName)) {//returns void, not interesting
 						continue;
 					}
 					String methodName = method.getElementName();
@@ -55,12 +65,12 @@ public class BeanIntrospector {
 						property = uncapitalize(methodName.substring(3));
 					} else if (methodName.startsWith("is")) {
 						property = uncapitalize(methodName.substring(2));
-					} 
+					}
 					if (property != null) {
 						String typeSimpleName = Signature.getSignatureSimpleName(typeName);
 						BeanProperty beanProperty = new BeanProperty(property, typeName,
 								typeSimpleName);
-						if (!properties.containsKey(properties)) {
+						if (!properties.containsKey(property)) {
 							properties.put(property, beanProperty);
 							if (beanProperty.hasType()) {
 								typedProperties.add(beanProperty);
@@ -89,7 +99,7 @@ public class BeanIntrospector {
 					}
 				}
 			}
-			currentType = getSuperclass(currentType);
+			currentType = findSuperclass(currentType);
 		}
 	}
 
@@ -98,36 +108,36 @@ public class BeanIntrospector {
 		return (flags & Flags.AccPublic) != 0 && (flags & Flags.AccStatic) == 0;
 	}
 
-	public static String getReturnType(IMethod method) throws JavaModelException {
-		String name = method.getReturnType();
-		if (name != null) {
-			String simpleName = Signature.getSignatureSimpleName(name);
-			IType type = method.getDeclaringType();
-			String[][] allResults = type.resolveType(simpleName);
-			if (allResults != null) {
-				String[] nameParts = allResults[0];
-				if (nameParts != null) {
-					StringBuffer fullName = new StringBuffer();
-					for (int i = 0; i < nameParts.length; i++) {
-						if (nameParts[i] != null) {
-							if (fullName.length() > 0) {
-								fullName.append(".");
+	public boolean isValidPath(String path) throws JavaModelException {
+		if (StringUtils.isNotBlank(path)) {
+			if (!path.endsWith(".")) {
+				BeanIntrospector introspector = this;
+				for (String element : path.split("[\\.]")) {
+					if (StringUtils.isNotBlank(element)) {
+						if (introspector.hasProperty(element)) {
+							BeanProperty property = introspector.getProperty(element);
+							IType propertyType = property.getType();
+							if (propertyType != null) {
+								introspector = new BeanIntrospector(propertyType);
 							}
-							fullName.append(nameParts[i]);
+						} else {
+							return false;
 						}
+					} else {
+						return false;
 					}
-					return fullName.toString();
-				}
 
+				}
+				return true;
 			}
 		}
-		return null;
+		return false;
 	}
 
-	public static IType getSuperclass(IType type) throws JavaModelException {
-		String name = type.getSuperclassTypeSignature();
-		if (name != null) {
-			String simpleName = Signature.getSignatureSimpleName(name);
+	public static IType findSuperclass(IType type) throws JavaModelException {
+		String superClassSignature = type.getSuperclassTypeSignature();
+		if (superClassSignature != null) {
+			String simpleName = Signature.getSignatureSimpleName(superClassSignature);
 			String[][] allResults = type.resolveType(simpleName);
 			if (allResults != null && allResults.length > 0) {
 				String[] nameParts = allResults[0];
@@ -145,7 +155,6 @@ public class BeanIntrospector {
 						return type.getJavaProject().findType(fullName.toString());
 					}
 				}
-
 			}
 		}
 		return null;
@@ -160,5 +169,26 @@ public class BeanIntrospector {
 			return Character.toLowerCase(value.charAt(0)) + value.substring(1);
 		}
 	}
+	
+	private boolean isNotJavaApiType(IType type) {
+		return type != null ? type.getFullyQualifiedName().matches("java(x)?\\.(.)+") : false ;
+	}
+	
+	private boolean isAccepted(IType type) {
+		if (type != null) {
+			String fullyQualifiedName = type.getFullyQualifiedName();
+			if (!fullyQualifiedName.matches("java(x)?\\.(.)+")) {
+				Settings settings = Settings.getSettings();
+				if (StringUtils.isNotEmpty(settings.getIncludeRegex())) {
+					return fullyQualifiedName.matches(settings.getIncludeRegex());
+				} 
+				return true;
+			}
+		}
+		return false;
+	}
 
+	public static void main(String[] args) {
+		System.out.println("org.hello.xxx".matches("org.hello.(.)+"));
+	}
 }

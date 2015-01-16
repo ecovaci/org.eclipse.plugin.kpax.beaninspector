@@ -5,28 +5,37 @@
          point="org.eclipse.ui.commands">
       <category
             id="org.eclipse.plugin.kpax.beaninspector.commands.category"
-            name="Kpax JavaBean Inspector Plugin Category">
+            name="JavaBean Inspector Plugin Category">
       </category>
       <command
             categoryId="org.eclipse.plugin.kpax.beaninspector.commands.category"
             id="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_selectClass"
-            name="Kpax JavaBean Inspector Plugin Select Class Command">
+            name="JavaBean Inspector Plugin Select Class">
       </command>
       <command
             categoryId="org.eclipse.plugin.kpax.beaninspector.commands.category"
             id="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_selectPath"
-            name="Kpax JavaBean Inspector Plugin Select Path Command">
+            name="JavaBean Inspector Plugin Select Path">
+      </command>
+     <command
+            categoryId="org.eclipse.plugin.kpax.beaninspector.commands.category"
+            id="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_validatePath"
+            name="JavaBean Inspector Plugin Validate Path">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eclipse.plugin.kpax.beaninspector.handlers.BinderHandler"
+            class="org.eclipse.plugin.kpax.beaninspector.handlers.SelectClassHandler"
             commandId="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_selectClass">
       </handler>
-      <handler
-            class="org.eclipse.plugin.kpax.beaninspector.handlers.BinderHandler"
+            <handler
+            class="org.eclipse.plugin.kpax.beaninspector.handlers.SelectPathHandler"
             commandId="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_selectPath">
+      </handler>
+            <handler
+            class="org.eclipse.plugin.kpax.beaninspector.handlers.ValidatePathHandler"
+            commandId="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_validatePath">
       </handler>
    </extension>
    <extension
@@ -36,6 +45,12 @@
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+ALT+0">
+      </key>
+      <key
+            commandId="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_validatePath"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+ALT+9">
       </key>
       <key
             commandId="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_selectPath"
@@ -52,9 +67,9 @@
                id="org.eclipse.plugin.kpax.beaninspector.toolbars.javabinderToolbar">
             <command
                   commandId="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_selectClass"
-                  icon="icons/sample.gif"
+                  icon="icons/bean_arrow.png"
                   id="org.eclipse.plugin.kpax.beaninspector.toolbars.javabinderCommand"
-                  tooltip="Open JavaBean Insector">
+                  tooltip="Open JavaBean Inspector">
             </command>
          </toolbar>
       </menuContribution>
