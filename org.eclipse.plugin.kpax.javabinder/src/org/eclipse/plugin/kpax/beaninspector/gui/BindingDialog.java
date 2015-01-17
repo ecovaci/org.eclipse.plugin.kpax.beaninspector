@@ -3,14 +3,15 @@ package org.eclipse.plugin.kpax.beaninspector.gui;
 import java.util.Collection;
 
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.internal.ui.JavaUIMessages;
 import org.eclipse.jdt.internal.ui.dialogs.OpenTypeSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.plugin.kpax.beaninspector.JavaBeanInspectorPlugin;
+import org.eclipse.plugin.kpax.beaninspector.Messages;
 import org.eclipse.plugin.kpax.beaninspector.introspector.BeanIntrospector;
 import org.eclipse.plugin.kpax.beaninspector.introspector.model.BeanProperty;
 import org.eclipse.plugin.kpax.beaninspector.logger.Logger;
@@ -44,7 +45,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 @SuppressWarnings("restriction")
 public class BindingDialog extends Dialog {
 
-	private static final Logger LOGGER = JavaBeanInspectorPlugin.getLogger();
+	private final Logger logger = JavaBeanInspectorPlugin.getLogger();
 
 	private static IType beanType;
 
@@ -61,6 +62,8 @@ public class BindingDialog extends Dialog {
 	private Button showFullQualifiedCheckButton;
 
 	private Button applyButton;
+
+	private Button okButton;
 
 	/**
 	 * Create the dialog.
@@ -100,7 +103,7 @@ public class BindingDialog extends Dialog {
 
 		classText = new Text(composite, SWT.BORDER);
 		classText.setEditable(false);
-		classText.setLayoutData(new RowData(454, SWT.DEFAULT));
+		classText.setLayoutData(new RowData(437, SWT.DEFAULT));
 
 		beanType = getBeanType();
 
@@ -110,7 +113,7 @@ public class BindingDialog extends Dialog {
 
 		Button searchClassButton = new Button(composite, SWT.NONE);
 		searchClassButton.addSelectionListener(new SearchClassSelectionListener());
-		searchClassButton.setText("Class");
+		searchClassButton.setText(Messages.BindingDialog_label_open_type);
 		searchClassButton.setFocus();
 
 		this.tree = new Tree(container, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
@@ -132,21 +135,21 @@ public class BindingDialog extends Dialog {
 		settingsExpandBar.setLayoutData(settingsGridDataExpandBar);
 
 		ExpandItem settingsExpanditem = new ExpandItem(settingsExpandBar, SWT.NONE);
-		settingsExpanditem.setText("Rules");
+		settingsExpanditem.setText(Messages.BindingDialog_label_rules);
 
 		Composite settingsComposite = new Composite(settingsExpandBar, SWT.BORDER);
 		settingsExpanditem.setControl(settingsComposite);
 		settingsComposite.setLayout(new GridLayout(2, false));
 
 		Label lblIncludes = new Label(settingsComposite, SWT.NONE);
-		lblIncludes.setText("Include regex:");
+		lblIncludes.setText(Messages.BindingDialog_label_includeRegex);
 
 		includeText = new Text(settingsComposite, SWT.BORDER);
 		includeText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		includeText.addModifyListener(new IncludeRegexModifyListener());
 
 		Label lblShowFullPath = new Label(settingsComposite, SWT.NONE);
-		lblShowFullPath.setText("Show fully qualified:");
+		lblShowFullPath.setText(Messages.BindingDialog_label_Show_fully_qualified);
 
 		showFullQualifiedCheckButton = new Button(settingsComposite, SWT.CHECK);
 		showFullQualifiedCheckButton.setSelection(true);
@@ -161,16 +164,12 @@ public class BindingDialog extends Dialog {
 
 		tree.addListener(SWT.Expand, new ExpandTreeListener());
 
-		try {
-			buildItemTreeChildren();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		buildItemTreeChildren();
+
 		return container;
 	}
 
-	private void buildItemTreeChildren() throws JavaModelException {
+	private void buildItemTreeChildren() {
 		if (beanType != null) {
 			buildItemTreeChildren(null);
 		}
@@ -186,41 +185,51 @@ public class BindingDialog extends Dialog {
 		resetLastCheckedItem();
 	}
 
-	private void buildItemTreeChildren(TreeItem item) throws JavaModelException {
-		if (item == null) {
-			resetTree();
-		}
-		IType itemType = WidgetDataUtils.getType(item, beanType);
-		if (itemType != null) {
-			Collection<BeanProperty> properties = new BeanIntrospector(itemType).getProperties();
-			System.out.println("propertyMap " + properties);
-			for (BeanProperty property : properties) {
-				TreeItem childItem = item != null ? new TreeItem(item, 0) : new TreeItem(tree, 0);
-				fillTreeItem(childItem, item, property);
-				if (item == null) {
-					buildItemTreeChildren(childItem);
+	private void buildItemTreeChildren(TreeItem item) {
+		try {
+			if (item == null) {
+				resetTree();
+			}
+			IType itemType = WidgetDataUtils.getType(item, beanType);
+			if (itemType != null) {
+				Collection<BeanProperty> properties = new BeanIntrospector(itemType)
+						.getProperties();
+				for (BeanProperty property : properties) {
+					TreeItem childItem = item != null ? new TreeItem(item, 0) : new TreeItem(tree,
+							0);
+					fillTreeItem(childItem, item, property);
+					if (item == null) {
+						buildItemTreeChildren(childItem);
+					}
 				}
 			}
+		} catch (Exception e) {
+			logger.error(e);
+			MessageDialog.openError(getShell(), Messages.BeanInspector_err_title,
+					NLS.bind(Messages.BindingDialog_err_build_tree, e.getMessage()));
 		}
 	}
 
 	private void fillTreeItem(TreeItem item, TreeItem parent, BeanProperty beanProperty) {
 		WidgetDataUtils.setProperty(item, beanProperty);
 		WidgetDataUtils.setPath(item, parent, beanProperty);
-		item.setText(beanProperty.asText());
+		item.setText(beanProperty.asText(showFullQualifiedCheckButton.getSelection()));
 	}
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-		applyButton = createButton(parent, IDialogConstants.CLIENT_ID, "Apply", false);
+		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		applyButton = createButton(parent, IDialogConstants.CLIENT_ID,
+				Messages.BindingDialog_label_apply, false);
 		applyButton.addSelectionListener(new ApplySelectionListener());
 		applyButton.setEnabled(false);
+		createButton(parent, IDialogConstants.CLIENT_ID, Messages.BindingDialog_label_reset, false)
+				.addSelectionListener(new ResetSelectionListener());
 	}
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(552, 612);
+		return new Point(564, 610);
 	}
 
 	public TreeItem getLastCheckedItem() {
@@ -237,7 +246,7 @@ public class BindingDialog extends Dialog {
 
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText("JavaBean Inspector");
+		shell.setText(Messages.BindingDialog_title);
 	}
 
 	private void applySettings() {
@@ -251,6 +260,12 @@ public class BindingDialog extends Dialog {
 		settings.setIncludeRegex(includeText.getText());
 		settings.setShowFullyQualified(showFullQualifiedCheckButton.getSelection());
 		settings.saveSettings();
+	}
+
+	private void resetView() {
+		beanType = null;
+		classText.setText("");
+		resetTree();
 	}
 
 	private class IncludeRegexModifyListener implements ModifyListener {
@@ -268,7 +283,6 @@ public class BindingDialog extends Dialog {
 		public void handleEvent(Event event) {
 			TreeItem checkedItem = (TreeItem) event.item;
 			if (event.detail == SWT.CHECK) {
-				System.out.println("checkedItem " + checkedItem.getChecked());
 				if (checkedItem.getChecked()) {
 					if (checkedItem != lastCheckedItem && lastCheckedItem != null
 							&& !lastCheckedItem.isDisposed()) {
@@ -289,12 +303,7 @@ public class BindingDialog extends Dialog {
 		public void handleEvent(Event event) {
 			TreeItem parentItem = (TreeItem) event.item;
 			for (TreeItem item : parentItem.getItems()) {
-				try {
-					buildItemTreeChildren(item);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				buildItemTreeChildren(item);
 			}
 
 		}
@@ -309,18 +318,10 @@ public class BindingDialog extends Dialog {
 			dialog.setTitle(JavaUIMessages.OpenTypeAction_dialogTitle);
 			dialog.setMessage(JavaUIMessages.OpenTypeAction_dialogMessage);
 			if (dialog.open() == SelectionDialog.OK) {
-				try {
-					beanType = (IType) dialog.getResult()[0];
-					classText.setText(beanType.getFullyQualifiedName());
-					buildItemTreeChildren();
-				} catch (Exception e1) {
-					LOGGER.error(e1);
-					MessageDialog.openError(
-							getShell(),
-							"Error",
-							"Something is wrong with the selected class content: "
-									+ e1.getMessage());
-				}
+				beanType = (IType) dialog.getResult()[0];
+				classText.setText(beanType.getFullyQualifiedName());
+				buildItemTreeChildren();
+				okButton.setFocus();
 			}
 		}
 	}
@@ -332,18 +333,24 @@ public class BindingDialog extends Dialog {
 		}
 	}
 
+	private class ResetSelectionListener extends SelectionAdapter {
+
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			Settings.getSettings().reset();
+			applySettings();
+			resetView();
+		}
+
+	}
+
 	private class ApplySelectionListener extends SelectionAdapter {
 
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			saveSettings();
 			applyButton.setEnabled(false);
-			try {
-				buildItemTreeChildren();
-			} catch (JavaModelException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			buildItemTreeChildren();
 		}
 
 	}

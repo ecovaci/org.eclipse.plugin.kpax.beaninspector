@@ -1,7 +1,6 @@
 package org.eclipse.plugin.kpax.beaninspector.introspector;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -168,10 +167,6 @@ public class BeanIntrospector {
 		} else {
 			return Character.toLowerCase(value.charAt(0)) + value.substring(1);
 		}
-	}
-	
-	private boolean isNotJavaApiType(IType type) {
-		return type != null ? type.getFullyQualifiedName().matches("java(x)?\\.(.)+") : false ;
 	}
 	
 	private boolean isAccepted(IType type) {

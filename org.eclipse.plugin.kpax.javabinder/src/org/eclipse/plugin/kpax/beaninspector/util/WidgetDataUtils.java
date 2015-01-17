@@ -8,9 +8,7 @@ import org.eclipse.swt.widgets.Widget;
 public class WidgetDataUtils {
 
 	private static final String PROPERTY_DATA = "property";
-
 	private static final String PATH_DATA = "path";
-	
 	private static final String VISITED_DATA = "visited";
 
 	public static IType getType(Widget widget, IType defaultType) {

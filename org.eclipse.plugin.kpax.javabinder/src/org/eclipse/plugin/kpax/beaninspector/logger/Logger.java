@@ -1,6 +1,5 @@
 package org.eclipse.plugin.kpax.beaninspector.logger;
 
-import org.eclipse.core.runtime.Status;
 
 public interface Logger {
 

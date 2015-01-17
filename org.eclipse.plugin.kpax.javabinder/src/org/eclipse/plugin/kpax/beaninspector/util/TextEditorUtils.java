@@ -15,7 +15,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class TextEditorUtils {
 
-	public static void replaceSelection (String newValue) throws BadLocationException {
+	public static void replaceSelection(String newValue) throws BadLocationException {
 		IEditorPart editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.getActiveEditor();
 		if (editor instanceof ITextEditor) {
@@ -26,12 +26,12 @@ public class TextEditorUtils {
 			if (selection instanceof TextSelection) {
 				final TextSelection textSelection = (TextSelection) selection;
 				document.replace(textSelection.getOffset(), textSelection.getLength(), newValue);
-				textEditor.selectAndReveal(textSelection.getOffset() + newValue.length() , 0);
+				textEditor.selectAndReveal(textSelection.getOffset() + newValue.length(), 0);
 			} else {
-				//TODO Logging
+				throw new IllegalStateException("The selection is not of text type");
 			}
 		} else {
-			//TODO Logging
+			throw new IllegalStateException("The selected editor is not of text type");
 		}
 	}
 }

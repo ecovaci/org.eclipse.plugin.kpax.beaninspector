@@ -48,13 +48,20 @@ public class BeanProperty {
 	public void setType(IType type) {
 		this.type = type;
 	}
-	
-	public boolean hasType () {
+
+	public boolean hasType() {
 		return this.type != null;
 	}
-	
-	public String asText () {
-		return this.property + " - " + this.typeSimpleName;
+
+	public String asText() {
+		return asText(false);
+	}
+
+	public String asText(boolean fullyQualified) {
+		return this.property
+				+ " - "
+				+ (fullyQualified && this.typeQualifiedName != null ? this.typeQualifiedName
+						: this.typeSimpleName);
 	}
 
 	@Override

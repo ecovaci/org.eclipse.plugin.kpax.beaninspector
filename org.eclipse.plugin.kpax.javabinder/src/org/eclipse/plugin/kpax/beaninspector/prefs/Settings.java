@@ -5,7 +5,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.plugin.kpax.beaninspector.JavaBeanInspectorPlugin;
 import org.eclipse.plugin.kpax.beaninspector.logger.Logger;
-import org.osgi.service.prefs.BackingStoreException;
 
 public class Settings {
 	
@@ -17,10 +16,9 @@ public class Settings {
 	private static Settings settings;
 
 	private String includeRegex = "";
-	private boolean showFullyQualified = true;
+	private boolean showFullyQualified;
 
 	private Settings() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getIncludeRegex() {
@@ -41,7 +39,7 @@ public class Settings {
 
 	public void reset() {
 		includeRegex = "";
-		showFullyQualified = true;
+		showFullyQualified = false;
 	}
 
 	public static Settings getSettings() {
@@ -75,6 +73,6 @@ public class Settings {
 			logger.error("Error on refreshing preferences", e);
 		}*/
 		includeRegex = preferences.get(INCLUDE_REGEX_KEY, "");
-		showFullyQualified = preferences.getBoolean(SHOW_FULLYQUALIFIED_KEY, true);
+		showFullyQualified = preferences.getBoolean(SHOW_FULLYQUALIFIED_KEY, false);
 	}
 }
