@@ -3,10 +3,14 @@ package org.eclipse.plugin.kpax.beaninspector.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.plugin.kpax.beaninspector.JavaBeanInspectorPlugin;
+import org.eclipse.plugin.kpax.beaninspector.Messages;
 import org.eclipse.plugin.kpax.beaninspector.gui.ContextualBeanInspector;
+import org.eclipse.plugin.kpax.beaninspector.logger.Logger;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IWorkbenchPart;
@@ -21,25 +25,29 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class SelectPathHandler extends AbstractHandler {
 
+	private final Logger logger = JavaBeanInspectorPlugin.getLogger();
+
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-			IWorkbenchPart workbenchPart = HandlerUtil.getActivePartChecked(event);
-			if (workbenchPart != null && workbenchPart instanceof ITextEditor) {
-				ITextViewer viewer = (ITextViewer) ((ITextEditor) workbenchPart)
-						.getAdapter(ITextOperationTarget.class);
-				if (viewer != null) {
-					StyledText text = viewer.getTextWidget();
-					try {
-						new ContextualBeanInspector(text.getShell()).showAt(computeLocation(text));
-					} catch (JavaModelException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+		IWorkbenchPart workbenchPart = HandlerUtil.getActivePartChecked(event);
+		if (workbenchPart != null && workbenchPart instanceof ITextEditor) {
+			ITextViewer viewer = (ITextViewer) ((ITextEditor) workbenchPart)
+					.getAdapter(ITextOperationTarget.class);
+			if (viewer != null) {
+				StyledText text = viewer.getTextWidget();
+				try {
+					new ContextualBeanInspector(text.getShell()).showAt(computeLocation(text));
+				} catch (Exception e) {
+					logger.error(e);
+					MessageDialog.openError(HandlerUtil.getActiveWorkbenchWindowChecked(event)
+							.getShell(), Messages.BeanInspector_err_title, NLS.bind(
+							Messages.ContextualBeanInspector_err_build_menu, e.getMessage()));
 				}
 			}
-		
+		}
+
 		return null;
 	}
-	
+
 	private Point computeLocation(StyledText text) {
 		Point absolutePosition = text.getDisplay().getCursorLocation();
 		Point relativePosition = text.toControl(absolutePosition);

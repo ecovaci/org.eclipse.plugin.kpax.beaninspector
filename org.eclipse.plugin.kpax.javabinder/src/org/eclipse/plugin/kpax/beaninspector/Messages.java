@@ -13,6 +13,7 @@ public class Messages extends NLS {
 	public static String ContextualBeanInspector_messageTitle;
 	public static String ContextualBeanInspector_info_no_type;
 	public static String ContextualBeanInspector_info_no_property;
+	public static String ContextualBeanInspector_err_open;
 
 	public static String ValidatePathHandler_messageTitle;
 	public static String ValidatePathHandler_no_text_selected;
@@ -30,6 +31,7 @@ public class Messages extends NLS {
 	public static String BindingDialog_label_apply;
 	public static String BindingDialog_err_build_tree;
 	public static String BindingDialog_title;
+	
 
 	static {
 		// initialize resource bundle
