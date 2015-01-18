@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>JavaBean Path Expression</title>
+</head>
+
+<body>
+<h1>JavaBean Path Expression</h1>
+<h2>The JavaBean </h2>
+<p>It is known that a <b>JavaBean</b> is 
+a Java class following the  conventions:</p>
+<ol>
+<li>The class must have a public default constructor (with no arguments).</li>
+<li>The class <i>properties</i> must be accessible using get, set, is (can be used for boolean properties instead of get), and other methods (so-called accessor methods and mutator methods) according to a standard naming convention. Setters can have one or more than one argument.</li>
+<li>The class should be serializable.</li>
+</ol>
+<h2>The Path Expression</h2>
+<p>For a JavaBean, a <i>Path Expression</i> is a property navigation path. Such path is represented by a String made of dot-separated names of properties of the Java Bean class.<p>
+<p>For example, let's take the following JavaBeans:</p>
+<pre>
+class Country implements Serializable {
+	private String code;
+	private String label;
+	
+	//-- Accessor methods here
+}
+
+class Address implements Serializable {
+	private Country country;
+	private String town;
+	
+	//-- Accessor methods here
+}
+
+class Person implements Serializable {
+	private String firstName;
+	private String lastName;
+	private Address address;
+	
+	//-- Accessor methods here
+}
+</pre>
+<p>Some path expressions, considering the Person class as root, are:</p>
+<ul>
+<li>firstName</li>
+<li>address</li>
+<li>address.town</li>
+<li>address.country.code</li>
+</ul>
+<p>For the sake of simplicity, we'll refer path expressions as <i>paths</i>.</p>
+<h2>The JavaBean revisited</h2>
+</body>
+</html>

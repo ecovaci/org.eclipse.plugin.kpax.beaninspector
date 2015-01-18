@@ -1,14 +1,24 @@
 package org.eclipse.plugin.kpax.beaninspector.gui;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.search.IJavaSearchConstants;
-import org.eclipse.jdt.internal.ui.JavaUIMessages;
-import org.eclipse.jdt.internal.ui.dialogs.OpenTypeSelectionDialog;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.plugin.kpax.beaninspector.JavaBeanInspectorPlugin;
 import org.eclipse.plugin.kpax.beaninspector.Messages;
@@ -42,7 +52,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
-@SuppressWarnings("restriction")
 public class BindingDialog extends Dialog {
 
 	private final Logger logger = JavaBeanInspectorPlugin.getLogger();
@@ -50,19 +59,12 @@ public class BindingDialog extends Dialog {
 	private static IType beanType;
 
 	private Tree tree;
-
 	private Text pathText;
-
 	private Text classText;
-
 	private TreeItem lastCheckedItem;
-
 	private Text includeText;
-
 	private Button showFullQualifiedCheckButton;
-
 	private Button applyButton;
-
 	private Button okButton;
 
 	/**
@@ -104,12 +106,6 @@ public class BindingDialog extends Dialog {
 		classText = new Text(composite, SWT.BORDER);
 		classText.setEditable(false);
 		classText.setLayoutData(new RowData(437, SWT.DEFAULT));
-
-		beanType = getBeanType();
-
-		if (beanType != null) {
-			classText.setText(beanType.getFullyQualifiedName());
-		}
 
 		Button searchClassButton = new Button(composite, SWT.NONE);
 		searchClassButton.addSelectionListener(new SearchClassSelectionListener());
@@ -164,15 +160,15 @@ public class BindingDialog extends Dialog {
 
 		tree.addListener(SWT.Expand, new ExpandTreeListener());
 
-		buildItemTreeChildren();
-
+		beanType = getBeanType();
+		if (beanType != null) {
+			applyBeanType();
+		}
 		return container;
 	}
 
 	private void buildItemTreeChildren() {
-		if (beanType != null) {
-			buildItemTreeChildren(null);
-		}
+		buildItemTreeChildren(null);
 	}
 
 	private void resetLastCheckedItem() {
@@ -268,6 +264,32 @@ public class BindingDialog extends Dialog {
 		resetTree();
 	}
 
+	private void applyBeanType() {
+		classText.setText(beanType.getFullyQualifiedName());
+		buildItemTreeChildren();
+	}
+
+	private IType chooseClassToTestType() throws JavaModelException {
+		List<IJavaProject> javaProjects = new ArrayList<IJavaProject>();
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		for (IProject project : projects) {
+			javaProjects.add(JavaCore.create(project));
+		}
+		IJavaElement[] elements = javaProjects.toArray(new IJavaElement[projects.length]);
+		IJavaSearchScope scope = SearchEngine.createJavaSearchScope(elements);
+		SelectionDialog dialog = JavaUI.createTypeDialog(getShell(), PlatformUI.getWorkbench()
+				.getProgressService(), scope,
+				IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES, false, beanType != null ? beanType.getFullyQualifiedName() : "");
+		dialog.setTitle(Messages.OpenTypeAction_dialogTitle);
+		dialog.setMessage(Messages.OpenTypeAction_dialogMessage);
+		if (dialog.open() == Window.OK) {
+			Object[] resultArray = dialog.getResult();
+			if (resultArray != null && resultArray.length > 0)
+				return (IType) resultArray[0];
+		}
+		return null;
+	}
+
 	private class IncludeRegexModifyListener implements ModifyListener {
 
 		@Override
@@ -312,15 +334,16 @@ public class BindingDialog extends Dialog {
 	private class SearchClassSelectionListener extends SelectionAdapter {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			SelectionDialog dialog = new OpenTypeSelectionDialog(getShell(), false, PlatformUI
-					.getWorkbench().getProgressService(), null,
-					IJavaSearchConstants.CLASS_AND_INTERFACE);
-			dialog.setTitle(JavaUIMessages.OpenTypeAction_dialogTitle);
-			dialog.setMessage(JavaUIMessages.OpenTypeAction_dialogMessage);
-			if (dialog.open() == SelectionDialog.OK) {
-				beanType = (IType) dialog.getResult()[0];
-				classText.setText(beanType.getFullyQualifiedName());
-				buildItemTreeChildren();
+			IType selectedType = null;
+			try {
+				selectedType = chooseClassToTestType();
+			} catch (Exception e1) {
+				// TODO Tratare exceptie
+				e1.printStackTrace();
+			}
+			if (selectedType != null) {
+				beanType = selectedType;
+				applyBeanType();
 				okButton.setFocus();
 			}
 		}
@@ -350,7 +373,9 @@ public class BindingDialog extends Dialog {
 		public void widgetSelected(SelectionEvent e) {
 			saveSettings();
 			applyButton.setEnabled(false);
-			buildItemTreeChildren();
+			if (beanType != null) {
+				buildItemTreeChildren();
+			}
 		}
 
 	}
