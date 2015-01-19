@@ -2,6 +2,6 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 
 <toc label="Concepts" link_to="toc.xml#concepts"> 
-	<topic label="JavaBean expression path"  href="html/concepts/expressionpath.html"> 
+	<topic label="JavaBean expression path"  href="html/concepts/expressionpath.html">
 	</topic>
 </toc>

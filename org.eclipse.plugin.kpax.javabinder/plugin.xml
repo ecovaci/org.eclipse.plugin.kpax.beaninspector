@@ -5,22 +5,22 @@
          point="org.eclipse.ui.commands">
       <category
             id="org.eclipse.plugin.kpax.beaninspector.commands.category"
-            name="JavaBean Inspector Plugin Category">
+            name="%category_name">
       </category>
       <command
             categoryId="org.eclipse.plugin.kpax.beaninspector.commands.category"
             id="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_selectClass"
-            name="JavaBean Inspector Plugin Select Class">
+            name="%command_selectClass_name">
       </command>
       <command
             categoryId="org.eclipse.plugin.kpax.beaninspector.commands.category"
             id="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_selectPath"
-            name="JavaBean Inspector Plugin Select Path">
+            name="%command_selectPath_name">
       </command>
      <command
             categoryId="org.eclipse.plugin.kpax.beaninspector.commands.category"
             id="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_validatePath"
-            name="JavaBean Inspector Plugin Validate Path">
+            name="%command_validatePath_name">
       </command>
    </extension>
    <extension
@@ -69,7 +69,7 @@
                   commandId="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_selectClass"
                   icon="icons/bean_arrow.png"
                   id="org.eclipse.plugin.kpax.beaninspector.toolbars.javabinderCommand"
-                  tooltip="Open JavaBean Inspector">
+                  tooltip="%command_selectClass_tooltip">
             </command>
          </toolbar>
       </menuContribution>

@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2015 Eugen Covaci
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package org.eclipse.plugin.kpax.beaninspector.gui;
 
 import java.util.ArrayList;
@@ -279,7 +294,8 @@ public class BindingDialog extends Dialog {
 		IJavaSearchScope scope = SearchEngine.createJavaSearchScope(elements);
 		SelectionDialog dialog = JavaUI.createTypeDialog(getShell(), PlatformUI.getWorkbench()
 				.getProgressService(), scope,
-				IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES, false, beanType != null ? beanType.getFullyQualifiedName() : "");
+				IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES, false,
+				beanType != null ? beanType.getFullyQualifiedName() : "");
 		dialog.setTitle(Messages.OpenTypeAction_dialogTitle);
 		dialog.setMessage(Messages.OpenTypeAction_dialogMessage);
 		if (dialog.open() == Window.OK) {
@@ -373,7 +389,7 @@ public class BindingDialog extends Dialog {
 		public void widgetSelected(SelectionEvent e) {
 			saveSettings();
 			applyButton.setEnabled(false);
-			if (beanType != null) {
+			if (getBeanType() != null) {
 				buildItemTreeChildren();
 			}
 		}
