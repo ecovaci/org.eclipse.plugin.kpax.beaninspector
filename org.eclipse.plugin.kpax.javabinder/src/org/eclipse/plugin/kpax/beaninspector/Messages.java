@@ -46,6 +46,15 @@ public class Messages extends NLS {
 	public static String BindingDialog_label_apply;
 	public static String BindingDialog_err_build_tree;
 	public static String BindingDialog_title;
+	public static String BindingDialog_err_not_javabean;
+	
+	public static String BindingDialog_tooltip_class;
+	public static String BindingDialog_tooltip_includeRegex;
+	public static String BindingDialog_tooltip_showFull;
+
+	public static String BindingDialog_tooltip_ok;
+	public static String BindingDialog_tooltip_reset; 
+	public static String BindingDialog_tooltip_apply;
 
 	public static String OpenTypeAction_dialogTitle;
 	public static String OpenTypeAction_dialogMessage;

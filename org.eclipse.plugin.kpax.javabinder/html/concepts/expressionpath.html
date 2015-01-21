@@ -3,6 +3,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../../../org.eclipse.wst.doc.user/common.css">
 	<title>JavaBean Path Expression</title>
 </head>
 
@@ -17,8 +18,8 @@ a Java class following the  conventions:</p>
 <li>The class should be serializable.</li>
 </ol>
 <h2>The Path Expression</h2>
-<p>For a JavaBean, a <i>Path Expression</i> is a property navigation path. Such path is represented by a String made of dot-separated names of properties of the Java Bean class.<p>
-<p>For example, let's take the following JavaBeans:</p>
+<p>For a JavaBean, a <i>Path Expression</i> is a property navigation path. Such path is represented by a String made of dot-separated names of properties of the Java Bean class.<br>
+For example, let's take the following JavaBeans:</p>
 <pre>
 class Country implements Serializable {
 	private String code;
@@ -51,5 +52,11 @@ class Person implements Serializable {
 </ul>
 <p>For the sake of simplicity, we'll refer path expressions as <i>paths</i>.</p>
 <h2>The JavaBean revisited</h2>
+<p>Let us look back to the JavaBean definition from the path expressions perspective.<br>
+It's obvious that the 1th and the 3th requirements have nothing to do with paths. That's why will keep only the 2th requirement.<br>
+<em>Therefore, the JavaBean definition this plugin will take it is: any Java class or interface having at least one property.</em></p><br><br>
+<p>See also:</p>
+<a href="../gettingstarted/selectType.html">Select JavaBean</a>
+<br><br>
 </body>
 </html>

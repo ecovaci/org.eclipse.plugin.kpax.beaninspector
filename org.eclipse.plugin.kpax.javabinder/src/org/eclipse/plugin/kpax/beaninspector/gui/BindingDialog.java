@@ -125,6 +125,7 @@ public class BindingDialog extends Dialog {
 		Button searchClassButton = new Button(composite, SWT.NONE);
 		searchClassButton.addSelectionListener(new SearchClassSelectionListener());
 		searchClassButton.setText(Messages.BindingDialog_label_open_type);
+		searchClassButton.setToolTipText(Messages.BindingDialog_tooltip_class);
 		searchClassButton.setFocus();
 
 		this.tree = new Tree(container, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
@@ -158,6 +159,7 @@ public class BindingDialog extends Dialog {
 		includeText = new Text(settingsComposite, SWT.BORDER);
 		includeText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		includeText.addModifyListener(new IncludeRegexModifyListener());
+		includeText.setToolTipText(Messages.BindingDialog_tooltip_includeRegex);
 
 		Label lblShowFullPath = new Label(settingsComposite, SWT.NONE);
 		lblShowFullPath.setText(Messages.BindingDialog_label_Show_fully_qualified);
@@ -165,7 +167,8 @@ public class BindingDialog extends Dialog {
 		showFullQualifiedCheckButton = new Button(settingsComposite, SWT.CHECK);
 		showFullQualifiedCheckButton.setSelection(true);
 		showFullQualifiedCheckButton.addSelectionListener(new FullyQualifiedChangeListener());
-
+		showFullQualifiedCheckButton.setToolTipText(Messages.BindingDialog_tooltip_showFull);
+		
 		applySettings();
 
 		settingsExpanditem.setHeight(settingsExpanditem.getControl().computeSize(SWT.DEFAULT,
@@ -230,12 +233,16 @@ public class BindingDialog extends Dialog {
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		okButton.setToolTipText(Messages.BindingDialog_tooltip_ok);
 		applyButton = createButton(parent, IDialogConstants.CLIENT_ID,
 				Messages.BindingDialog_label_apply, false);
+		applyButton.setToolTipText(Messages.BindingDialog_tooltip_apply);
 		applyButton.addSelectionListener(new ApplySelectionListener());
 		applyButton.setEnabled(false);
-		createButton(parent, IDialogConstants.CLIENT_ID, Messages.BindingDialog_label_reset, false)
-				.addSelectionListener(new ResetSelectionListener());
+		Button resetButton = createButton(parent, IDialogConstants.CLIENT_ID,
+				Messages.BindingDialog_label_reset, false);
+		resetButton.addSelectionListener(new ResetSelectionListener());
+		resetButton.setToolTipText(Messages.BindingDialog_tooltip_reset);
 	}
 
 	@Override
@@ -343,24 +350,31 @@ public class BindingDialog extends Dialog {
 			for (TreeItem item : parentItem.getItems()) {
 				buildItemTreeChildren(item);
 			}
-
 		}
 	}
 
 	private class SearchClassSelectionListener extends SelectionAdapter {
 		@Override
-		public void widgetSelected(SelectionEvent e) {
+		public void widgetSelected(SelectionEvent event) {
 			IType selectedType = null;
 			try {
 				selectedType = chooseClassToTestType();
-			} catch (Exception e1) {
-				// TODO Tratare exceptie
-				e1.printStackTrace();
+			} catch (Exception e) {
+				logger.error(e);
+				MessageDialog.openError(getShell(), Messages.BeanInspector_err_title,
+						NLS.bind(Messages.BindingDialog_err_build_tree, e.getMessage()));
 			}
 			if (selectedType != null) {
 				beanType = selectedType;
 				applyBeanType();
-				okButton.setFocus();
+				if (tree.getItemCount() > 0) {
+					okButton.setFocus();
+				} else {
+					MessageDialog.openInformation(getShell(),
+							Messages.ContextualBeanInspector_messageTitle,
+							Messages.BindingDialog_err_not_javabean);
+					resetView();
+				}
 			}
 		}
 	}
