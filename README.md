@@ -6,3 +6,6 @@ This plugin can be used for JavaBean inspection, selecting paths within the sele
 <li>Java JDK v1.7 or later</li>
 <li>Eclipse v3.5 or later</li>
 </ul>
+<p>
+To install the plugin unzip the attached archive into the home Eclipse folder or copy the Jar file into <b>dropins</b> Eclipse folder.</p>
+<em>Reading the plugin's help (available from menu Help->Help Contents) is highly recommended!</em>
