@@ -233,7 +233,7 @@ public class BindingDialog extends Dialog {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(610, 552);
+		return new Point(610, 622);
 	}
 
 	public TreeItem getLastCheckedItem() {
