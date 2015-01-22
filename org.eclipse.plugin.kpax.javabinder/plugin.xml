@@ -22,6 +22,11 @@
             id="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_validatePath"
             name="%command_validatePath_name">
       </command>
+      <command
+            categoryId="org.eclipse.plugin.kpax.beaninspector.commands.category"
+            id="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_selectJavaBean"
+            name="%command_selectJavaBean_name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -29,13 +34,17 @@
             class="org.eclipse.plugin.kpax.beaninspector.handlers.SelectClassHandler"
             commandId="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_selectClass">
       </handler>
-            <handler
+      <handler
             class="org.eclipse.plugin.kpax.beaninspector.handlers.SelectPathHandler"
             commandId="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_selectPath">
       </handler>
             <handler
             class="org.eclipse.plugin.kpax.beaninspector.handlers.ValidatePathHandler"
             commandId="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_validatePath">
+      </handler>
+      <handler
+            class="org.eclipse.plugin.kpax.beaninspector.handlers.SelectJavaBeanHandler"
+            commandId="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_selectJavaBean">
       </handler>
    </extension>
    <extension
@@ -57,6 +66,12 @@
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+ALT+SPACE">
+      </key>
+	  <key
+            commandId="org.eclipse.plugin.kpax.beaninspector.commands.javabinderCommand_selectJavaBean"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+ALT+8">
       </key>
    </extension>
    <extension
@@ -85,9 +100,6 @@
       </toc>
       <toc
             file="tocconcepts.xml">
-      </toc>
-      <toc
-            file="tocsamples.xml">
       </toc>
       <toc
             file="toctasks.xml">

@@ -41,6 +41,7 @@ import org.eclipse.plugin.kpax.beaninspector.introspector.BeanIntrospector;
 import org.eclipse.plugin.kpax.beaninspector.introspector.model.BeanProperty;
 import org.eclipse.plugin.kpax.beaninspector.logger.Logger;
 import org.eclipse.plugin.kpax.beaninspector.prefs.Settings;
+import org.eclipse.plugin.kpax.beaninspector.util.JdtUtils;
 import org.eclipse.plugin.kpax.beaninspector.util.WidgetDataUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -261,6 +262,10 @@ public class BindingDialog extends Dialog {
 			return null;
 		}
 	}
+	
+	public static void setBeanType(IType type) {
+		beanType = type;
+	}
 
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -358,7 +363,7 @@ public class BindingDialog extends Dialog {
 		public void widgetSelected(SelectionEvent event) {
 			IType selectedType = null;
 			try {
-				selectedType = chooseClassToTestType();
+				selectedType = JdtUtils.chooseType(getShell(), beanType);
 			} catch (Exception e) {
 				logger.error(e);
 				MessageDialog.openError(getShell(), Messages.BeanInspector_err_title,
@@ -393,6 +398,7 @@ public class BindingDialog extends Dialog {
 			Settings.getSettings().reset();
 			applySettings();
 			resetView();
+			applyButton.setEnabled(false);
 		}
 
 	}

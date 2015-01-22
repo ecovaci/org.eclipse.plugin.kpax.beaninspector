@@ -1,0 +1,48 @@
+package org.eclipse.plugin.kpax.beaninspector.util;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.window.Window;
+import org.eclipse.plugin.kpax.beaninspector.Messages;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.SelectionDialog;
+
+public class JdtUtils {
+
+	public static IType chooseType(Shell shell, IType currentBeanType)
+			throws JavaModelException {
+		List<IJavaProject> javaProjects = new ArrayList<IJavaProject>();
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		for (IProject project : projects) {
+			javaProjects.add(JavaCore.create(project));
+		}
+		IJavaElement[] elements = javaProjects.toArray(new IJavaElement[projects.length]);
+		IJavaSearchScope scope = SearchEngine.createJavaSearchScope(elements);
+		SelectionDialog dialog = JavaUI.createTypeDialog(shell, PlatformUI.getWorkbench()
+				.getProgressService(), scope,
+				IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES, false,
+				currentBeanType != null ? currentBeanType.getFullyQualifiedName() : "");
+		dialog.setTitle(Messages.OpenTypeAction_dialogTitle);
+		dialog.setMessage(Messages.OpenTypeAction_dialogMessage);
+		if (dialog.open() == Window.OK) {
+			Object[] resultArray = dialog.getResult();
+			if (resultArray != null && resultArray.length > 0)
+				return (IType) resultArray[0];
+		}
+		return null;
+	}
+
+}

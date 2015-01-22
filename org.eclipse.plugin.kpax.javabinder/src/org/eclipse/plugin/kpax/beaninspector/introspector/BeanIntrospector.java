@@ -55,6 +55,10 @@ public class BeanIntrospector {
 	public boolean hasProperty(String name) {
 		return properties.containsKey(name);
 	}
+	
+	public boolean hasProperty() {
+		return !properties.isEmpty();
+	}
 
 	public Collection<BeanProperty> getTypedProperties() {
 		return typedProperties;
