@@ -66,6 +66,7 @@ public class BindingDialog extends Dialog {
 	private Text includeText;
 	private Button showFullQualifiedCheckButton;
 	private Button applyButton;
+	private Button resetButton;
 	private Button okButton;
 
 	/**
@@ -107,6 +108,7 @@ public class BindingDialog extends Dialog {
 		classText = new Text(composite, SWT.BORDER);
 		classText.setEditable(false);
 		classText.setLayoutData(new RowData(437, SWT.DEFAULT));
+		classText.addModifyListener(new ClassModifyListener());
 
 		Button searchClassButton = new Button(composite, SWT.NONE);
 		searchClassButton.addSelectionListener(new SearchClassSelectionListener());
@@ -225,10 +227,11 @@ public class BindingDialog extends Dialog {
 		applyButton.setToolTipText(Messages.BindingDialog_tooltip_apply);
 		applyButton.addSelectionListener(new ApplySelectionListener());
 		applyButton.setEnabled(false);
-		Button resetButton = createButton(parent, IDialogConstants.CLIENT_ID,
+		resetButton = createButton(parent, IDialogConstants.CLIENT_ID,
 				Messages.BindingDialog_label_reset, false);
 		resetButton.addSelectionListener(new ResetSelectionListener());
 		resetButton.setToolTipText(Messages.BindingDialog_tooltip_reset);
+		resetButton.setEnabled(!Settings.getSettings().isDefault() || getBeanType() != null);
 	}
 
 	@Override
@@ -280,6 +283,18 @@ public class BindingDialog extends Dialog {
 		classText.setText(beanType.getFullyQualifiedName());
 		buildItemTreeChildren();
 	}
+	
+	private class ClassModifyListener implements ModifyListener {
+
+		@Override
+		public void modifyText(ModifyEvent e) {
+			if (resetButton != null) {
+				resetButton.setEnabled(true);
+			}
+			
+		}
+		
+	}
 
 	private class IncludeRegexModifyListener implements ModifyListener {
 
@@ -287,6 +302,9 @@ public class BindingDialog extends Dialog {
 		public void modifyText(ModifyEvent e) {
 			if (applyButton != null) {
 				applyButton.setEnabled(true);
+			}
+			if (resetButton != null) {
+				resetButton.setEnabled(true);
 			}
 		}
 	}
@@ -351,6 +369,7 @@ public class BindingDialog extends Dialog {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			applyButton.setEnabled(true);
+			resetButton.setEnabled(true);
 		}
 	}
 
@@ -362,6 +381,7 @@ public class BindingDialog extends Dialog {
 			applySettings();
 			resetView();
 			applyButton.setEnabled(false);
+			resetButton.setEnabled(false);
 		}
 
 	}

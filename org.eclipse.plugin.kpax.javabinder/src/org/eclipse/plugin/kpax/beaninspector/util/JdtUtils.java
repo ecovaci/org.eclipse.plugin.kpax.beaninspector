@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
@@ -22,12 +22,13 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 
 public class JdtUtils {
 
-	public static IType chooseType(Shell shell, IType currentBeanType)
-			throws JavaModelException {
+	public static IType chooseType(Shell shell, IType currentBeanType) throws CoreException {
 		List<IJavaProject> javaProjects = new ArrayList<IJavaProject>();
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (IProject project : projects) {
-			javaProjects.add(JavaCore.create(project));
+			if (project.isOpen() && project.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
+				javaProjects.add(JavaCore.create(project));
+			}
 		}
 		IJavaElement[] elements = javaProjects.toArray(new IJavaElement[projects.length]);
 		IJavaSearchScope scope = SearchEngine.createJavaSearchScope(elements);

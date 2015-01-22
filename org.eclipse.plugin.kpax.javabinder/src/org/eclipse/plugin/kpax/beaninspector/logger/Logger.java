@@ -18,12 +18,12 @@ package org.eclipse.plugin.kpax.beaninspector.logger;
 
 public interface Logger {
 
-	public abstract void info(String message);
+	void info(String message);
 
-	public abstract void warn(String message);
+	void warn(String message);
 
-	public abstract void error(Exception e);
+	void error(Exception e);
 
-	public abstract void error(String message, Exception e);
+	void error(String message, Exception e);
 
 }

@@ -47,6 +47,10 @@ public class Settings {
 	public boolean isShowFullyQualified() {
 		return showFullyQualified;
 	}
+	
+	public boolean isDefault () {
+		return !showFullyQualified && "".equals(includeRegex);
+	}
 
 	public void setShowFullyQualified(boolean showFullyQualified) {
 		this.showFullyQualified = showFullyQualified;
