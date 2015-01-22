@@ -92,12 +92,12 @@ public class JavaBeanInspectorPlugin extends Plugin implements Logger {
 	 */
 	@Override
 	public void error(Exception e) {
-		log(e.getMessage(), Status.WARNING, e);
+		log(e.getMessage(), Status.ERROR, e);
 	}
 
 	@Override
 	public void error(String message, Exception e) {
-		log(message, Status.WARNING, e);
+		log(message, Status.ERROR, e);
 	}
 
 	private void log(String message, int severity, Exception e) {
