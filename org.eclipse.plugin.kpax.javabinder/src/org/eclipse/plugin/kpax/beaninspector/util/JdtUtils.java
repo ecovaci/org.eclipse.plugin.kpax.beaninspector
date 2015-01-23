@@ -44,7 +44,7 @@ public class JdtUtils {
 			Object[] resultArray = dialog.getResult();
 			if (resultArray != null && resultArray.length > 0) {
 				IType type = (IType) resultArray[0];
-				if (BeanIntrospector.getInstance(type).hasProperty()) {
+				if (new BeanIntrospector(type).hasProperty()) {
 					return (IType) type;
 				} else {
 					boolean confirm = MessageDialog.openConfirm(shell,

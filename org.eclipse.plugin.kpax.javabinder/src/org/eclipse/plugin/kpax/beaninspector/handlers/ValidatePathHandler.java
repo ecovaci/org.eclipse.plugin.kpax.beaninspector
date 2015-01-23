@@ -52,7 +52,7 @@ public class ValidatePathHandler extends AbstractHandler {
 				IType beanType = BindingDialog.getBeanType();
 				if (beanType != null) {
 					try {
-						boolean isValid = BeanIntrospector.getInstance(beanType).isValidPath(textSelection
+						boolean isValid = new BeanIntrospector(beanType).isValidPath(textSelection
 								.getText());
 						if (isValid) {
 							MessageDialog.openInformation(shell,

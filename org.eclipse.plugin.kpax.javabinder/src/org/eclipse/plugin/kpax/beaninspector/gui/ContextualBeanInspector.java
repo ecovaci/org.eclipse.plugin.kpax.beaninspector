@@ -76,7 +76,7 @@ public class ContextualBeanInspector {
 		try {
 			IType beanType = WidgetDataUtils.getType(item, BindingDialog.getBeanType());
 			if (beanType != null) {
-				BeanIntrospector beanIntrospector = BeanIntrospector.getInstance(beanType);
+				BeanIntrospector beanIntrospector = new BeanIntrospector(beanType);
 				Collection<BeanProperty> properties = beanIntrospector.getProperties();
 				if (!properties.isEmpty()) {
 					Menu menu;

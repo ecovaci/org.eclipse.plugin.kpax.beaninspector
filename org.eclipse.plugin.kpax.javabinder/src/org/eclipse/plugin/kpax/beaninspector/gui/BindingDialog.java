@@ -194,7 +194,7 @@ public class BindingDialog extends Dialog {
 			}
 			IType itemType = WidgetDataUtils.getType(item, beanType);
 			if (itemType != null) {
-				Collection<BeanProperty> properties = BeanIntrospector.getInstance(itemType)
+				Collection<BeanProperty> properties = new BeanIntrospector(itemType)
 						.getProperties();
 				for (BeanProperty property : properties) {
 					TreeItem childItem = item != null ? new TreeItem(item, 0) : new TreeItem(tree,
