@@ -14,8 +14,10 @@ import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.plugin.kpax.beaninspector.Messages;
+import org.eclipse.plugin.kpax.beaninspector.introspector.BeanIntrospector;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
@@ -40,8 +42,19 @@ public class JdtUtils {
 		dialog.setMessage(Messages.OpenTypeAction_dialogMessage);
 		if (dialog.open() == Window.OK) {
 			Object[] resultArray = dialog.getResult();
-			if (resultArray != null && resultArray.length > 0)
-				return (IType) resultArray[0];
+			if (resultArray != null && resultArray.length > 0) {
+				IType type = (IType) resultArray[0];
+				if (BeanIntrospector.getInstance(type).hasProperty()) {
+					return (IType) type;
+				} else {
+					boolean confirm = MessageDialog.openConfirm(shell,
+							Messages.ContextualBeanInspector_messageTitle,
+							Messages.ContextualBeanInspector_info_no_property);
+					if (confirm) {
+						return chooseType(shell, currentBeanType);
+					}
+				}
+			}
 		}
 		return null;
 	}

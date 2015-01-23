@@ -45,7 +45,7 @@ public class SelectJavaBeanHandler extends AbstractHandler {
 		try {
 			IType type = JdtUtils.chooseType(shell, BindingDialog.getBeanType());
 			if (type != null) {
-				if (new BeanIntrospector(type).hasProperty()) {
+				if (BeanIntrospector.getInstance(type).hasProperty()) {
 					BindingDialog.setBeanType(type);
 				} else {
 					MessageDialog.openInformation(shell,

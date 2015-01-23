@@ -30,18 +30,28 @@ import org.eclipse.plugin.kpax.beaninspector.introspector.model.BeanProperty;
 import org.eclipse.plugin.kpax.beaninspector.prefs.Settings;
 
 public class BeanIntrospector {
+	
+	private static final IntrospectorCache _CACHE = new IntrospectorCache();
+	
 	private final Map<String, BeanProperty> properties = new HashMap<String, BeanProperty>();
 
 	private IType type;
 
 	private Collection<BeanProperty> typedProperties;
 
-	public BeanIntrospector(IType type) throws JavaModelException {
+	private BeanIntrospector(IType type) throws JavaModelException {
 		this.type = type;
 		this.typedProperties = new ArrayList<BeanProperty>();
 		if (this.type.exists() && (this.type.isClass() || this.type.isInterface())) {
 			introspect();
 		}
+	}
+	
+	public static BeanIntrospector getInstance (IType type) throws JavaModelException {
+		if (!_CACHE.containsKey(type)) {
+			_CACHE.put(type, new BeanIntrospector(type));
+		}
+		return _CACHE.get(type);
 	}
 
 	public Collection<BeanProperty> getProperties() {
