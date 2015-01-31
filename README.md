@@ -8,6 +8,6 @@ This plugin can be used for JavaBean inspection, selecting paths within the sele
 </ul>
 <p>
 To install the plugin unzip the attached archive into the home Eclipse folder or copy the Jar file into <b>dropins</b> Eclipse folder.<br>
-A detailed description and usage description can be found <a href="http://eugencovaci.blogspot.ro/2015/01/an-eclipse-plugin-javabean-inspector.html">here</a>
+More details and usage description can be found <a href="http://eugencovaci.blogspot.ro/2015/01/an-eclipse-plugin-javabean-inspector.html">here</a>
 </p>
 <em>Reading the plugin's help (available from menu Help->Help Contents) is highly recommended!</em>
