@@ -6,8 +6,10 @@ This plugin can be used for JavaBean inspection, selecting paths within the sele
 <li>Java JDK v1.7 or later</li>
 <li>Eclipse v3.5 or later</li>
 </ul>
+<h2>Installation</h2>
 <p>
-To install the plugin unzip the attached archive into the home Eclipse folder or copy the Jar file into <b>dropins</b> Eclipse folder.<br>
+The easiest way is to install it from <a href="http://marketplace.eclipse.org/content/javabean-inspector">Eclipe Marketplace</a>.<br>
+If you want to make the build yourself, to install it just copy the resulting Jar file into <b>dropins</b> Eclipse folder.<br>
 More details and usage description can be found <a href="https://eugencovaciq.wordpress.com/2015/01/24/an-eclipse-plugin-javabean-inspector">here</a>. (Please leave a feedback!)
 </p>
 <em>Reading the plugin's help (available from menu Help->Help Contents) is highly recommended!</em>
