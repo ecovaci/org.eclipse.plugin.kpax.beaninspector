@@ -10,6 +10,6 @@ This plugin can be used for JavaBean inspection, selecting paths within the sele
 <p>
 The easiest way is to install it is on <a href="http://marketplace.eclipse.org/content/javabean-inspector">Eclipe Marketplace</a>.<br>
 If you want to make the build yourself, to install it just copy the resulting Jar file into <b>dropins</b> Eclipse folder.<br>
-More details and usage description can be found <a href="https://eugencovaciq.wordpress.com/2015/01/24/an-eclipse-plugin-javabean-inspector">here</a>. (Please leave a feedback!)
+More details and usage description can be found on <a href="https://eugencovaciq.wordpress.com/2015/01/24/an-eclipse-plugin-javabean-inspector">this blog</a>. (Please leave a feedback!)
 </p>
 <em>Reading the plugin's help (available from menu Help->Help Contents) is highly recommended!</em>
