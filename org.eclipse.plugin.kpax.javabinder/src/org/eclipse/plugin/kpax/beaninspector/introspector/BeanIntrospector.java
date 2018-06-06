@@ -17,8 +17,8 @@ package org.eclipse.plugin.kpax.beaninspector.introspector;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jdt.core.Flags;
@@ -30,7 +30,7 @@ import org.eclipse.plugin.kpax.beaninspector.introspector.model.BeanProperty;
 import org.eclipse.plugin.kpax.beaninspector.prefs.Settings;
 
 public class BeanIntrospector {
-	private final Map<String, BeanProperty> properties = new HashMap<String, BeanProperty>();
+	private final Map<String, BeanProperty> properties = new TreeMap<String, BeanProperty>();
 
 	private IType type;
 
