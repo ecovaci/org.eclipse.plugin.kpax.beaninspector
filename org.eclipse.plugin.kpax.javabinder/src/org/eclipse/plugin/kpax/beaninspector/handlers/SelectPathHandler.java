@@ -50,7 +50,7 @@ public class SelectPathHandler extends AbstractHandler {
 			if (viewer != null) {
 				StyledText text = viewer.getTextWidget();
 				try {
-					new ContextualBeanInspector(text.getShell()).showAt(computeLocation(text));
+					new ContextualBeanInspector(text.getShell(), text.getSelectionText()).showAt(computeLocation(text));
 				} catch (Exception e) {
 					logger.error(e);
 					MessageDialog.openError(HandlerUtil.getActiveWorkbenchWindowChecked(event)

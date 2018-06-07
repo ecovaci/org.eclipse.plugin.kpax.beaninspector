@@ -41,13 +41,16 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 public class ContextualBeanInspector {
-	
+
 	private final Logger logger = JavaBeanInspectorPlugin.getLogger();
 
 	private Shell shell;
 
-	public ContextualBeanInspector(Shell shell) {
+	private String selectedText;
+
+	public ContextualBeanInspector(Shell shell, String selectedText) {
 		this.shell = shell;
+		this.selectedText = selectedText;
 	}
 
 	public void showAt(Point location) throws JavaModelException {
@@ -77,7 +80,7 @@ public class ContextualBeanInspector {
 			IType beanType = WidgetDataUtils.getType(item, BindingDialog.getBeanType());
 			if (beanType != null) {
 				BeanIntrospector beanIntrospector = new BeanIntrospector(beanType);
-				Collection<BeanProperty> properties = beanIntrospector.getProperties();
+				Collection<BeanProperty> properties = beanIntrospector.getProperties(selectedText);
 				if (!properties.isEmpty()) {
 					Menu menu;
 					if (item != null) {

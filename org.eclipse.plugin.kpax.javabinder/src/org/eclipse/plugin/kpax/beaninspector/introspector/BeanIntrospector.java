@@ -17,6 +17,9 @@ package org.eclipse.plugin.kpax.beaninspector.introspector;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -46,6 +49,35 @@ public class BeanIntrospector {
 
 	public Collection<BeanProperty> getProperties() {
 		return properties.values();
+	}
+	
+	public Collection<BeanProperty> getProperties(String hint) {
+		Collection<BeanProperty> allProperties = new ArrayList<> (properties.values());
+		List<BeanProperty> sortedProperties = new LinkedList<>();
+		if (hint != null && !"".equals(hint.trim())) {
+			hint = hint.trim().toUpperCase();
+			
+			// Put first the properties starting with <hint>
+			for (Iterator<BeanProperty> itr = allProperties.iterator();itr.hasNext();) {
+				BeanProperty prop = itr.next();
+				if (prop.getProperty().toUpperCase().startsWith(hint)) {
+					sortedProperties.add(prop);
+					itr.remove();
+				}
+			}
+			
+			// Now put the properties containing <hint>
+			for (Iterator<BeanProperty> itr = allProperties.iterator();itr.hasNext();) {
+				BeanProperty prop = itr.next();
+				if (prop.getProperty().toUpperCase().contains(hint)) {
+					sortedProperties.add(prop);
+					itr.remove();
+				}
+			}
+			
+		}
+		sortedProperties.addAll(allProperties);
+		return sortedProperties;
 	}
 
 	public BeanProperty getProperty(String name) {
