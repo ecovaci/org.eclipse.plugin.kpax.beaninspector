@@ -102,15 +102,16 @@ public class BindingDialog extends Dialog {
 		rowLayout.fill = true;
 		composite.setLayout(rowLayout);
 		GridData gridData = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gridData.heightHint = 36;
+		gridData.heightHint = 45;
 		composite.setLayoutData(gridData);
 
 		classText = new Text(composite, SWT.BORDER);
 		classText.setEditable(false);
-		classText.setLayoutData(new RowData(437, SWT.DEFAULT));
+		classText.setLayoutData(new RowData(437, 30));
 		classText.addModifyListener(new ClassModifyListener());
 
 		Button searchClassButton = new Button(composite, SWT.NONE);
+		searchClassButton.setLayoutData(new RowData(SWT.DEFAULT, 29));
 		searchClassButton.addSelectionListener(new SearchClassSelectionListener());
 		searchClassButton.setText(Messages.BindingDialog_label_open_type);
 		searchClassButton.setToolTipText(Messages.BindingDialog_tooltip_class);
@@ -236,7 +237,7 @@ public class BindingDialog extends Dialog {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(610, 622);
+		return new Point(644, 705);
 	}
 
 	public TreeItem getLastCheckedItem() {
